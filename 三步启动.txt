@@ -1,0 +1,6 @@
+# 1. 建库
+mysql -u root -p < campus-trading\sql\schema.sql
+# 2. 后端 (8080)
+cd campus-trading\backend; mvn spring-boot:run
+# 3. 前端 (5173)
+cd campus-trading\frontend; npm install; npm run dev

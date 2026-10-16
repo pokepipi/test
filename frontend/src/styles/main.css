@@ -1,0 +1,28 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+  background: #f5f7fa;
+  color: #303133;
+}
+
+a { text-decoration: none; color: inherit; }
+
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  padding: 16px;
+}
+
+.price-text { color: #f56c6c; font-weight: 700; }
+
+.muted { color: #909399; font-size: 13px; }
+
+.pager { margin-top: 16px; display: flex; justify-content: center; }

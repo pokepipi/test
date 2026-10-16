@@ -1,0 +1,25 @@
+# ============================================================
+# 分库分表 profile (ShardingSphere-JDBC 5.3.2)
+#
+# 启用方式:
+#   mvn spring-boot:run -Dspring-boot.run.profiles=sharding
+#   或 java -jar campus-trading-backend-1.0.0.jar --spring.profiles.active=sharding
+#
+# 前置条件: 先执行 sql/schema-sharding.sql 建好 orders_0 ~ orders_3
+#
+# 原理: 5.3.0 起 ShardingSphere 不再提供 Spring Boot Starter,
+#       而是把自己伪装成一个 JDBC 驱动 —— 只要把驱动类和 URL 换掉,
+#       Spring Boot / MyBatis-Plus 完全无感知, 不需要任何额外配置类。
+#       不激活本 profile 时走原生 MySQL 驱动, 两者互不影响。
+# ============================================================
+
+spring:
+  datasource:
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    # 分片规则在同目录的 sharding.yaml 里, url 中的 xxx 必须与 spring.datasource.username 一致
+    url: jdbc:shardingsphere:classpath:sharding.yaml
+
+logging:
+  level:
+    # 看 SQL 改写细节时打开
+    org.apache.shardingsphere: info

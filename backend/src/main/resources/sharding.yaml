@@ -1,0 +1,53 @@
+# ============================================================
+# ShardingSphere-JDBC 5.3.2 分片配置
+#
+# 被 application-sharding.yml 通过下面这行引用:
+#   spring.datasource.url: jdbc:shardingsphere:classpath:sharding.yaml
+#
+# 注意: 数据库账号密码要跟着改这里(和 application.yml 里的保持一致)
+# ============================================================
+
+# 逻辑库名, 不填默认 logic_db
+databaseName: campus_trading
+
+# 运行模式: 单机内存模式, 规则只从本文件读取(毕设/本地演示足够)
+mode:
+  type: Standalone
+  repository:
+    type: JDBC
+
+dataSources:
+  ds0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/campus_trading?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: "123456"
+    maximumPoolSize: 10
+    minimumIdle: 2
+
+rules:
+  # 分片规则
+  - !SHARDING
+    tables:
+      # 逻辑表 orders -> 物理表 orders_0 / orders_1 / orders_2 / orders_3
+      #
+      # 分片键为什么选 buyer_id:
+      #   "我的订单"列表是最主要的访问路径, 带上 buyer_id 就能精准路由到单张表;
+      #   换成 seller_id / id 查询时会广播到 4 张表再归并(功能正确, 但更慢)
+      orders:
+        actualDataNodes: ds0.orders_${0..3}
+        tableStrategy:
+          standard:
+            shardingColumn: buyer_id
+            shardingAlgorithmName: orders-inline
+    shardingAlgorithms:
+      orders-inline:
+        type: INLINE
+        props:
+          # buyer_id 对 4 取模决定落到哪张表
+          algorithm-expression: orders_${buyer_id % 4}
+
+props:
+  # 打印真实执行的 SQL(能看到逻辑表被改写成哪张物理表), 演示时打开
+  sql-show: true

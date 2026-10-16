@@ -1,0 +1,55 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/campus_trading?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+  # Redis 缓存 (未部署 Redis 也能正常启动: CacheService 会自动降级为直接查库)
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: 0
+    timeout: 2000ms
+    lettuce:
+      pool:
+        max-active: 16
+        max-idle: 8
+        min-idle: 2
+        max-wait: 1000ms
+  # 分库分表: 不在这里配置。激活 sharding profile 即可,
+  # 该 profile 会把驱动换成 ShardingSphereDriver(规则见 resources/sharding.yaml)
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+# 缓存参数 (可按需调整)
+campus:
+  cache:
+    item-detail-ttl: 300       # 物品详情缓存时长(秒), 实际 TTL 会再加 0~60 秒随机抖动
+    item-null-ttl: 60          # 空值缓存时长(秒), 用于防穿透
+    view-flush-interval: 30000 # 浏览量从 Redis 回写数据库的间隔(毫秒)
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+
+# JWT 配置 (生产环境务必替换 secret)
+jwt:
+  secret: campus-trading-2024-secret-key-please-change-0123456789abcdef
+  expire-hours: 72
+
+# 上传目录 (相对后端运行目录, 可用绝对路径覆盖)
+upload:
+  dir: ./uploads
